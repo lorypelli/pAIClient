@@ -16,6 +16,9 @@ export default {
             height: {
                 max: '100vh',
                 container: '750px'
+            },
+            maxHeight: {
+                container_fit: 'calc(750px - 8rem)'
             }
         }
     },
