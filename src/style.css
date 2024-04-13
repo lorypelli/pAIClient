@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 * {
-    @apply font-custom
+    @apply font-custom;
 }
 
 :focus {
-    @apply outline-none
+    @apply outline-none;
 }
 
 body {
-    @apply flex flex-col justify-center items-center h-max
+    @apply flex h-max flex-col items-center justify-center;
 }

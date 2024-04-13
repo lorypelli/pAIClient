@@ -11,7 +11,7 @@ export default {
             },
             width: {
                 container: '1000px',
-                container_fit: 'calc(100% - 2rem)'
+                container_fit: 'calc(100% - 8rem)'
             },
             height: {
                 max: '100vh',
