@@ -4,7 +4,7 @@
 </script>
 
 <div class="relative h-container w-container rounded-2xl border-2 border-black">
-    <div class="h-7 w-full">
+    <div class="h-12 w-full">
         <button
             class="absolute m-4 mr-2 h-7 w-24 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
@@ -26,7 +26,7 @@
             if (container) {
                 container.appendChild(msg);
             }
-            disabled = true;
+            //disabled = true;
             const response = document.createElement('span');
             response.innerText = 'OpenAI: Loading...';
             if (container) {
@@ -36,6 +36,6 @@
     >
     <div
         id="container"
-        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-6"
+        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-2"
     ></div>
 </div>
