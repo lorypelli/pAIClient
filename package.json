@@ -26,5 +26,8 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.8",
     "vite-plugin-multip": "^1.0.6"
+  },
+  "dependencies": {
+    "cookiejs": "^2.1.3"
   }
 }
