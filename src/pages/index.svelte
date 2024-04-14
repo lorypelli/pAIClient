@@ -7,7 +7,9 @@
     <div class="h-7 w-full">
         <button
             class="absolute m-4 mr-2 h-7 w-24 rounded-2xl border-2 border-black bg-white"
-            >Settings</button
+            on:click={() => {
+                window.location.href = '/settings';
+            }}>Settings</button
         >
     </div>
     <textarea
@@ -17,7 +19,7 @@
     <button
         class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black"
         disabled={message.trim() == '' || disabled}
-        on:click={async () => {
+        on:click={() => {
             const container = document.querySelector('#container');
             const msg = document.createElement('span');
             msg.innerText = 'You: ' + message;
@@ -34,6 +36,6 @@
     >
     <div
         id="container"
-        class="max-h-container_fit flex flex-col overflow-auto p-4 pt-6"
+        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-6"
     ></div>
 </div>
