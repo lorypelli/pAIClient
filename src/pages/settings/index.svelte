@@ -1,1 +1,4 @@
-<h1>Test</h1>
+<script lang="ts"></script>
+<div>
+    <span>C</span>
+</div>
