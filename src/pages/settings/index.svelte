@@ -47,8 +47,8 @@
     <button
         class="w-60 rounded-xl border-2 border-black"
         on:click={() => {
-            cookie('model', model, { expires: 30, secure: true });
-            cookie('prompt', prompt, { expires: 30, secure: true });
+            cookie.set('model', model, { expires: 30, secure: true });
+            cookie.set('prompt', prompt, { expires: 30, secure: true });
             saved = true;
             window.location.href = '/';
         }}>Save</button
