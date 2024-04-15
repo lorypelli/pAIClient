@@ -1,9 +1,21 @@
 <script lang="ts">
     import cookie from 'cookiejs';
-    if (!cookie.get("token")) {
+    import { onMount } from 'svelte';
+    let saved = false;
+    function beforeUnload(e: BeforeUnloadEvent) {
+        if (!saved) {
+            e.returnValue = false;
+        }
+    }
+    if (!cookie.get('token')) {
         window.location.href = '/login';
     }
-    if (!cookie.get('model') || !['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'].includes(cookie.get('model').toString())) {
+    if (
+        !cookie.get('model') ||
+        !['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'].includes(
+            cookie.get('model').toString(),
+        )
+    ) {
         cookie.set('model', 'gpt-3.5-turbo');
     }
     if (!cookie.get('prompt')) {
@@ -11,6 +23,12 @@
     }
     let model = cookie.get('model').toString();
     let prompt = cookie.get('prompt').toString();
+    onMount(() => {
+        window.addEventListener('beforeunload', beforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', beforeUnload);
+        };
+    });
 </script>
 
 <div class="flex h-max flex-col items-center justify-center space-y-1">
@@ -32,6 +50,7 @@
         on:click={() => {
             cookie('model', model, { expires: 30, secure: true });
             cookie('prompt', prompt, { expires: 30, secure: true });
+            saved = true;
             window.location.href = '/';
         }}>Save</button
     >
