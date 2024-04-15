@@ -4,9 +4,5 @@ import { multip } from 'vite-plugin-multip'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(), multip({
-    page: {
-      title: 'pAIClient'
-    }
-  })],
+  plugins: [svelte(), multip()],
 })
