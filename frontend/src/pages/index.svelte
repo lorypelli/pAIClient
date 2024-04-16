@@ -42,6 +42,7 @@
             if (container) {
                 container.appendChild(response);
             }
+            message = '';
         }}>Submit</button
     >
     <div
