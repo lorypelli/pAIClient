@@ -16,10 +16,10 @@
             cookie.get('model').toString(),
         )
     ) {
-        cookie.set('model', 'gpt-3.5-turbo');
+        cookie.set('model', 'gpt-3.5-turbo', { expires: 30, secure: true });
     }
     if (!cookie.get('prompt')) {
-        cookie.set('prompt', '');
+        cookie.set('prompt', '', { expires: 30, secure: true });
     }
     let model = cookie.get('model').toString();
     let prompt = cookie.get('prompt').toString();
