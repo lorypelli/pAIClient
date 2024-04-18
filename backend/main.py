@@ -41,10 +41,10 @@ def frontend(req: Request, path: str):
     if not path:
         path = '/'
     d = '../frontend/dist'
-    if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
-        return RedirectResponse('/login')
     if path == 'login' and req.cookies.get('token'):
         return RedirectResponse('/')
+    if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
+        return RedirectResponse('/login')
     if isdir(f'{d}/{path}'):
         path = f'{path}/index.html'
     return FileResponse(f'{d}/{path}')

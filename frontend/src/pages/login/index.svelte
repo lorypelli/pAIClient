@@ -17,8 +17,9 @@
                 body: JSON.stringify({
                     token: token,
                 }),
+            }).then(() => {
+                window.location.reload()
             });
-            window.location.href = '/';
         }}>Login</button
     >
 </div>
