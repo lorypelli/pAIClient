@@ -1,5 +1,4 @@
 <script lang="ts">
-    import cookie from 'cookiejs';
     let token = '';
 </script>
 
@@ -13,7 +12,12 @@
         class="w-60 rounded-xl border-2 border-black"
         disabled={token.trim() == ''}
         on:click={() => {
-            cookie('token', token, { expires: 14, secure: true });
+            fetch('/api/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'token': token
+                })
+            })
             window.location.href = '/';
         }}>Login</button
     >

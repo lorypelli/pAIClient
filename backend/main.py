@@ -20,7 +20,16 @@ async def config(req: Request, res: Response):
             return Response(f'Successfully set {'model and prompt' if model and prompt else 'model' if model else 'prompt' if prompt else ''}')
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
-    return RedirectResponse('/')
+@app.post('/api/login')
+async def token(req: Request, res: Response):
+    try:
+        body = await req.json()
+        token = body.get('token')
+        if token:
+            res.set_cookie('token', token, expires=14, secure=True, httponly=True)
+        return Response('Successfully set token')
+    except:
+        return Response('Body is not a valid JSON with token property', 400)
 @app.get('/{path:path}')
 def frontend(path: str):
     d = '../frontend/dist'

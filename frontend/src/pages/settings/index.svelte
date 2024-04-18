@@ -1,5 +1,4 @@
 <script lang="ts">
-    import cookie from 'cookiejs';
     import { onMount } from 'svelte';
     let saved = false;
     function beforeUnload(e: BeforeUnloadEvent) {
@@ -7,22 +6,8 @@
             e.returnValue = false;
         }
     }
-    if (!cookie.get('token')) {
-        window.location.href = '/login';
-    }
-    if (
-        !cookie.get('model') ||
-        !['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'].includes(
-            cookie.get('model').toString(),
-        )
-    ) {
-        cookie.set('model', 'gpt-3.5-turbo', { expires: 30, secure: true });
-    }
-    if (!cookie.get('prompt')) {
-        cookie.set('prompt', '', { expires: 30, secure: true });
-    }
-    let model = cookie.get('model').toString();
-    let prompt = cookie.get('prompt').toString();
+    let model = '';
+    let prompt = '';
     onMount(() => {
         window.addEventListener('beforeunload', beforeUnload);
         return () => {
@@ -46,11 +31,15 @@
     />
     <button
         class="w-60 rounded-xl border-2 border-black"
-        on:click={() => {
-            cookie.set('model', model, { expires: 30, secure: true });
-            cookie.set('prompt', prompt, { expires: 30, secure: true });
+        on:click={async () => {
+            fetch('/api/config', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'model': model,
+                    'prompt': prompt
+                })
+            })
             saved = true;
-            window.location.href = '/';
         }}>Save</button
     >
 </div>

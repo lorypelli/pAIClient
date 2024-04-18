@@ -1,16 +1,6 @@
 <script lang="ts">
-    import cookie from 'cookiejs';
     let message = '';
     let disabled = false;
-    if (!cookie.get('token')) {
-        window.location.href = '/login';
-    }
-    if (!cookie.get('model') || !['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'].includes(cookie.get('model').toString())) {
-        cookie.set('model', 'gpt-3.5-turbo', { expires: 30, secure: true });
-    }
-    if (!cookie.get('prompt')) {
-        cookie.set('prompt', '', { expires: 30, secure: true });
-    }
 </script>
 
 <div class="relative h-container w-container rounded-2xl border-2 border-black">
