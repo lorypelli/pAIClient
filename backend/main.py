@@ -12,12 +12,16 @@ async def config(req: Request, res: Response):
         try:
             body = await req.json()
             model = body.get('model')
-            if model:
+            set_model = False
+            set_prompt = False
+            if model and model.strip() != '':
                 res.set_cookie('model', model, expires=30, secure=True)
+                set_model = True
             prompt = body.get('prompt')
-            if prompt:
+            if prompt and prompt.strip() != '':
                 res.set_cookie('prompt', prompt, expires=30, secure=True)
-            return Response(f'Successfully set {'model and prompt' if model and prompt else 'model' if model else 'prompt' if prompt else ''}')
+                set_prompt = True
+            return Response(f'Successfully set {'model and prompt' if set_model and set_prompt else 'model' if set_model else 'prompt' if set_prompt else ''}')
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
 @app.post('/api/login')

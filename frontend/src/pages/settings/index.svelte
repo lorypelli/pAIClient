@@ -31,7 +31,7 @@
     />
     <button
         class="w-60 rounded-xl border-2 border-black"
-        on:click={async () => {
+        on:click={() => {
             fetch('/api/config', {
                 method: 'POST',
                 body: JSON.stringify({
