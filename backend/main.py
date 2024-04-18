@@ -5,33 +5,31 @@ from os.path import isdir
 app = FastAPI()
 @app.get('/api/config')
 @app.post('/api/config')
-async def config(req: Request, res: Response):
+async def config(req: Request):
     if req.method == 'GET':
         return JSONResponse({ 'model': req.cookies.get('model') or 'gpt-3.5-turbo', 'prompt': req.cookies.get('prompt') or '' })
     elif req.method == 'POST':
         try:
             body = await req.json()
             model = body.get('model')
-            set_model = False
-            set_prompt = False
+            res: Response = Response('Successfully set model or prompt')
             if model and model.strip() != '':
-                res.set_cookie('model', model, expires=30, secure=True)
-                set_model = True
+                res.set_cookie('model', model, expires=30, secure=True, httponly=True)
             prompt = body.get('prompt')
             if prompt and prompt.strip() != '':
-                res.set_cookie('prompt', prompt, expires=30, secure=True)
-                set_prompt = True
-            return Response(f'Successfully set {'model and prompt' if set_model and set_prompt else 'model' if set_model else 'prompt' if set_prompt else ''}')
+                res.set_cookie('prompt', prompt, expires=30, secure=True, httponly=True)
+            return res
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
 @app.post('/api/login')
-async def token(req: Request, res: Response):
+async def token(req: Request):
     try:
         body = await req.json()
         token = body.get('token')
+        res: Response = Response('Successfully set token')
         if token:
             res.set_cookie('token', token, expires=14, secure=True, httponly=True)
-        return Response('Successfully set token')
+        return res
     except:
         return Response('Body is not a valid JSON with token property', 400)
 @app.get('/{path:path}')
