@@ -15,9 +15,9 @@
             fetch('/api/login', {
                 method: 'POST',
                 body: JSON.stringify({
-                    'token': token
-                })
-            })
+                    token: token,
+                }),
+            });
             window.location.href = '/';
         }}>Login</button
     >

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from uvicorn import run
 from os.path import isdir
+from datetime import datetime, timedelta
 app = FastAPI()
 @app.get('/api/config')
 @app.post('/api/config')
@@ -14,10 +15,10 @@ async def config(req: Request):
             model = body.get('model')
             res: Response = Response('Successfully set model or prompt')
             if model and model.strip() != '':
-                res.set_cookie('model', model, expires=30, secure=True, httponly=True)
+                res.set_cookie('model', model, expires=int(timedelta(30).total_seconds()), secure=True, httponly=True)
             prompt = body.get('prompt')
             if prompt and prompt.strip() != '':
-                res.set_cookie('prompt', prompt, expires=30, secure=True, httponly=True)
+                res.set_cookie('prompt', prompt, expires=int(timedelta(30).total_seconds()), secure=True, httponly=True)
             return res
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
@@ -27,14 +28,23 @@ async def token(req: Request):
         body = await req.json()
         token = body.get('token')
         res: Response = Response('Successfully set token')
-        if token:
-            res.set_cookie('token', token, expires=14, secure=True, httponly=True)
+        if token:   
+            res.set_cookie('token', token, max_age=int(timedelta(14).total_seconds()), secure=True, httponly=True)
+            res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(30).total_seconds()), secure=True)
+            res.set_cookie('prompt', '', max_age=int(timedelta(30).total_seconds()), secure=True)
         return res
     except:
         return Response('Body is not a valid JSON with token property', 400)
 @app.get('/{path:path}')
-def frontend(path: str):
+def frontend(req: Request, path: str):
+    path = path.replace('index.html', '')
+    if not path:
+        path = '/'
     d = '../frontend/dist'
+    if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
+        return RedirectResponse('/login')
+    if path == 'login' and req.cookies.get('token'):
+        return RedirectResponse('/')
     if isdir(f'{d}/{path}'):
         path = f'{path}/index.html'
     return FileResponse(f'{d}/{path}')

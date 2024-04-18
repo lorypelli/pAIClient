@@ -9,6 +9,12 @@
     let model = '';
     let prompt = '';
     onMount(() => {
+        fetch('/api/config').then((res) => {
+            res.json().then((data) => {
+                model = data.model;
+                prompt = data.prompt;
+            });
+        });
         window.addEventListener('beforeunload', beforeUnload);
         return () => {
             window.removeEventListener('beforeunload', beforeUnload);
@@ -35,10 +41,10 @@
             fetch('/api/config', {
                 method: 'POST',
                 body: JSON.stringify({
-                    'model': model,
-                    'prompt': prompt
-                })
-            })
+                    model: model,
+                    prompt: prompt,
+                }),
+            });
             saved = true;
         }}>Save</button
     >

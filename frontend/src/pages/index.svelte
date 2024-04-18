@@ -3,7 +3,7 @@
     let disabled = false;
 </script>
 
-<div class="relative h-container w-container rounded-2xl border-2 border-black">
+<div class="h-container w-container relative rounded-2xl border-2 border-black">
     <div class="h-12 w-full">
         <button
             class="absolute m-4 mr-2 h-7 w-24 rounded-2xl border-2 border-black bg-white"
@@ -13,7 +13,7 @@
         >
     </div>
     <textarea
-        class="absolute bottom-0 m-4 h-20 w-container_fit resize-none rounded-2xl border-2 border-black"
+        class="w-container_fit absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black"
         bind:value={message}
     />
     <button
@@ -37,6 +37,6 @@
     >
     <div
         id="container"
-        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-2"
+        class="max-h-container_fit flex flex-col overflow-auto p-4 pt-2"
     />
 </div>
