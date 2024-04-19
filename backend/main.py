@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from uvicorn import run
 from os.path import isdir
 from datetime import datetime, timedelta
+import openai
 app = FastAPI(docs_url='/api/docs', redoc_url=None)
 @app.get('/api/config')
 @app.post('/api/config')
@@ -28,7 +29,12 @@ async def token(req: Request):
         body = await req.json()
         token = body.get('token')
         res: Response = Response('Successfully set token')
-        if token:   
+        if token:
+            openai.api_key = token
+            try:
+                openai.models.list()
+            except:
+                return RedirectResponse('/login')
             res.set_cookie('token', token, max_age=int(timedelta(14).total_seconds()), secure=True, httponly=True)
             res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(30).total_seconds()), secure=True)
             res.set_cookie('prompt', '', max_age=int(timedelta(30).total_seconds()), secure=True)
