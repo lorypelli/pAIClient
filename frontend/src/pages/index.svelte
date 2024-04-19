@@ -32,7 +32,18 @@
             if (container) {
                 container.appendChild(response);
             }
+            fetch('/api/response', {
+                method: 'POST',
+                body: JSON.stringify({
+                    message: message,
+                }),
+            }).then((res) => {
+                res.text().then((data) => {
+                    response.innerText = 'OpenAI: ' + data;
+                });
+            });
             message = '';
+            disabled = false;
         }}>Submit</button
     >
     <div

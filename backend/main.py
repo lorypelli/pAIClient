@@ -16,11 +16,11 @@ async def config(req: Request):
             body = await req.json()
             model = body.get('model')
             res: Response = Response('Successfully set model or prompt')
-            if model and model.strip() != '':
-                res.set_cookie('model', model, expires=int(timedelta(30).total_seconds()), secure=True, httponly=True)
+            if model is not None:
+                res.set_cookie('model', model, max_age=int(timedelta(30).total_seconds()), secure=True, httponly=True)
             prompt = body.get('prompt')
-            if prompt and prompt.strip() != '':
-                res.set_cookie('prompt', prompt, expires=int(timedelta(30).total_seconds()), secure=True, httponly=True)
+            if prompt is not None:
+                res.set_cookie('prompt', prompt, max_age=int(timedelta(30).total_seconds()), secure=True, httponly=True)
             return res
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
@@ -39,11 +39,11 @@ async def token(req: Request):
         return Response('Body is not a valid JSON with token property', 400)
 @app.post('/api/response')
 async def response(req: Request):
-    try:
-        body = await req.json()
-        token = body.get('token')
-        if token and token.strip() != '':
-            openai.api_key = token
+    token = req.cookies.get('token')
+    if token and token.strip() != '':
+        openai.api_key = token
+        try:
+            body = await req.json()
             message = body.get('message')
             messages = [{ 'role': 'system', 'content': req.cookies.get('prompt') or '' }]
             if message and message.strip() != '':
@@ -53,8 +53,8 @@ async def response(req: Request):
                 return Response(res.choices[0].message.content)
             except:
                 return Response('There was an error', 400)
-    except:
-        return Response('Body is not a valid JSON with token and message properties', 400)
+        except:
+            return Response('Body is not a valid JSON with message property', 400)
 @app.get('/{path:path}')
 def frontend(req: Request, path: str):
     path = path.replace('index.html', '')

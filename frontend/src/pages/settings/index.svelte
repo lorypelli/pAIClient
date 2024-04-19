@@ -3,7 +3,8 @@
     let saved = false;
     function beforeUnload(e: BeforeUnloadEvent) {
         if (!saved) {
-            e.returnValue = false;
+            e.preventDefault();
+            e.returnValue = '';
         }
     }
     let model = '';
@@ -46,6 +47,7 @@
                 }),
             });
             saved = true;
+            window.location.href = '/';
         }}>Save</button
     >
 </div>
