@@ -18,7 +18,7 @@
                     token: token,
                 }),
             }).then(() => {
-                window.location.reload()
+                window.location.reload();
             });
         }}>Login</button
     >

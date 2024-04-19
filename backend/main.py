@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from uvicorn import run
 from os.path import isdir
 from datetime import datetime, timedelta
-app = FastAPI()
+app = FastAPI(docs_url='/api/docs', redoc_url=None)
 @app.get('/api/config')
 @app.post('/api/config')
 async def config(req: Request):
