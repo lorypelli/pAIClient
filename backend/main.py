@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from uvicorn import run
 from os.path import isdir
 from datetime import datetime, timedelta
+from requests import get
 import openai
 app = FastAPI(docs_url='/api/docs', redoc_url=None)
 @app.get('/api/config')
@@ -30,15 +31,24 @@ async def token(req: Request):
         token = body.get('token')
         res: Response = Response('Successfully set token')
         if token:
-            openai.api_key = token
-            try:
-                openai.models.list()
-            except:
-                return RedirectResponse('/login')
             res.set_cookie('token', token, max_age=int(timedelta(14).total_seconds()), secure=True, httponly=True)
             res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(30).total_seconds()), secure=True)
             res.set_cookie('prompt', '', max_age=int(timedelta(30).total_seconds()), secure=True)
         return res
+    except:
+        return Response('Body is not a valid JSON with token property', 400)
+@app.post('/api/response')
+async def response(req: Request):
+    try:
+        body = await req.json()
+        token = body.get('token')
+        if token:
+            openai.api_key = token
+            try:
+                res = openai.chat.completions.create(temperature=0.0, model=req.cookies.get('model') or 'gpt-3.5-turbo', messages=[{ 'role': 'system', 'content': req.cookies.get('prompt') or '' }])
+                return Response(res.choices[0].message.content)
+            except:
+                return RedirectResponse('/login')
     except:
         return Response('Body is not a valid JSON with token property', 400)
 @app.get('/{path:path}')

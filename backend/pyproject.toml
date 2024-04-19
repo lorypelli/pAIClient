@@ -6,7 +6,6 @@ authors = ["LoryPelli"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-requests = "^2.31.0"
 fastapi = "^0.110.2"
 uvicorn = "^0.29.0"
 openai = "^1.23.1"
