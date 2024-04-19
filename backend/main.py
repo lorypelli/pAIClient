@@ -30,7 +30,7 @@ async def token(req: Request):
         body = await req.json()
         token = body.get('token')
         res: Response = Response('Successfully set token')
-        if token:
+        if token and token.strip() != '':
             res.set_cookie('token', token, max_age=int(timedelta(14).total_seconds()), secure=True, httponly=True)
             res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(30).total_seconds()), secure=True)
             res.set_cookie('prompt', '', max_age=int(timedelta(30).total_seconds()), secure=True)
@@ -42,15 +42,19 @@ async def response(req: Request):
     try:
         body = await req.json()
         token = body.get('token')
-        if token:
+        if token and token.strip() != '':
             openai.api_key = token
+            message = body.get('message')
+            messages = [{ 'role': 'system', 'content': req.cookies.get('prompt') or '' }]
+            if message and message.strip() != '':
+                messages.append({ 'role': 'user', 'content': message })
             try:
-                res = openai.chat.completions.create(temperature=0.0, model=req.cookies.get('model') or 'gpt-3.5-turbo', messages=[{ 'role': 'system', 'content': req.cookies.get('prompt') or '' }])
+                res = openai.chat.completions.create(temperature=0.0, model=req.cookies.get('model') or 'gpt-3.5-turbo', messages=messages)
                 return Response(res.choices[0].message.content)
             except:
-                return RedirectResponse('/login')
+                return Response('There was an error', 400)
     except:
-        return Response('Body is not a valid JSON with token property', 400)
+        return Response('Body is not a valid JSON with token and message properties', 400)
 @app.get('/{path:path}')
 def frontend(req: Request, path: str):
     path = path.replace('index.html', '')
