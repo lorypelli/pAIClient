@@ -17,10 +17,10 @@ async def config(req: Request):
             model = body.get('model')
             res: Response = Response('Successfully set model or prompt')
             if model is not None:
-                res.set_cookie('model', model, max_age=int(timedelta(30).total_seconds()), secure=True, httponly=True)
+                res.set_cookie('model', model, secure=True, httponly=True)
             prompt = body.get('prompt')
             if prompt is not None:
-                res.set_cookie('prompt', prompt, max_age=int(timedelta(30).total_seconds()), secure=True, httponly=True)
+                res.set_cookie('prompt', prompt, secure=True, httponly=True)
             return res
         except:
             return Response('Body is not a valid JSON with model and prompt properties', 400)
@@ -31,9 +31,9 @@ async def token(req: Request):
         token = body.get('token')
         res: Response = Response('Successfully set token')
         if token and token.strip() != '':
-            res.set_cookie('token', token, max_age=int(timedelta(14).total_seconds()), secure=True, httponly=True)
-            res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(30).total_seconds()), secure=True)
-            res.set_cookie('prompt', '', max_age=int(timedelta(30).total_seconds()), secure=True)
+            res.set_cookie('token', token, max_age=int(timedelta(21).total_seconds()), secure=True, httponly=True)
+            res.set_cookie('model', 'gpt-3.5-turbo', secure=True, httponly=True)
+            res.set_cookie('prompt', '', secure=True, httponly=True)
         return res
     except:
         return Response('Body is not a valid JSON with token property', 400)
