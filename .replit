@@ -1,0 +1,9 @@
+run = "make -s"
+
+[nix]
+channel = "stable-23_11"
+
+[[ports]]
+localPort = 5173
+externalPort = 80
+exposeLocalhost = true

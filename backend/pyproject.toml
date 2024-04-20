@@ -5,7 +5,7 @@ description = ""
 authors = ["LoryPelli"]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.8"
 fastapi = "^0.110.2"
 uvicorn = "^0.29.0"
 openai = "^1.23.2"
