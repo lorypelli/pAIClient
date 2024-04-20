@@ -58,9 +58,9 @@ async def response(req: Request):
 @app.get('/{path:path}')
 def frontend(req: Request, path: str):
     path = path.replace('index.html', '')
-    if not path:
-        path = '/'
     d = '../frontend/dist'
+    if path == 'favicon.ico':
+        return FileResponse(f'{d}/public/favicon.ico')
     if path == 'login' and req.cookies.get('token'):
         return RedirectResponse('/')
     if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
