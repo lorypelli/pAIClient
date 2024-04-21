@@ -39,6 +39,9 @@
                 }),
             }).then((res) => {
                 res.text().then((data) => {
+                    if (data == 'null') {
+                        window.location.reload();
+                    }
                     response.innerText = 'OpenAI: ' + data;
                 });
             });
