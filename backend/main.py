@@ -31,6 +31,11 @@ async def token(req: Request):
         token = body.get('token')
         res: Response = Response('Successfully set token')
         if token and token.strip() != '':
+            try:
+                openai.api_key = token
+                openai.models.list()
+            except:
+                return RedirectResponse('/login')
             res.set_cookie('token', token, max_age=int(timedelta(21).total_seconds()), secure=True, httponly=True)
             res.set_cookie('model', 'gpt-3.5-turbo', secure=True, httponly=True)
             res.set_cookie('prompt', '', secure=True, httponly=True)
