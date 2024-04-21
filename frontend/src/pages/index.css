@@ -1,7 +1,0 @@
-body {
-    @apply flex h-max flex-col items-center justify-center;
-}
-
-button:disabled {
-    @apply cursor-not-allowed;
-}

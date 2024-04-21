@@ -9,3 +9,11 @@
 :focus {
     @apply outline-none;
 }
+
+button:disabled {
+    @apply cursor-not-allowed;
+}
+
+body {
+    @apply flex h-max flex-col items-center justify-center;
+}
