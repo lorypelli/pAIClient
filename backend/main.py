@@ -60,6 +60,31 @@ async def response(req: Request):
                 return Response('There was an error', 400)
         except:
             return Response('Body is not a valid JSON with message property', 400)
+@app.get('/api/download')
+@app.post('/api/download')
+async def download(req: Request):
+    if req.method == 'GET':
+        messages = req.cookies.get('messages')
+        if messages and messages.strip() != '':
+            return JSONResponse({
+                model: req.cookies.get('model') or 'gpt-3.5-turbo',
+                prompt: req.cookies.get('prompt') or '',
+                messages: messages    
+            })
+    elif req.method == 'POST':
+        try:
+            body = await req.json()
+            messages = body.get('messages')
+            if messages and messages.strip() != '':
+                res: JSONResponse = JSONResponse({
+                    model: req.cookies.get('model') or 'gpt-3.5-turbo',
+                    prompt: req.cookies.get('prompt') or '',
+                    messages: messages
+                })
+                res.set_cookie('messages', messages)
+                return res
+        except:
+            return Response('Body is not a valid JSON with messages property', 400)
 @app.get('/{path:path}')
 def frontend(req: Request, path: str):
     path = path.replace('index.html', '')

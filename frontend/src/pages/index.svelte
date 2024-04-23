@@ -1,15 +1,30 @@
 <script lang="ts">
+    interface Chat {
+        You: string,
+        OpenAI: string
+    }
     let message = '';
     let disabled = false;
+    let messages: Chat[] = [];
 </script>
 
 <div class="h-container w-container relative rounded-2xl border-2 border-black">
     <div class="h-12 w-full">
         <button
-            class="absolute m-4 mr-2 h-7 w-24 rounded-2xl border-2 border-black bg-white"
+            class="absolute m-4 h-7 w-24 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
                 window.location.href = '/settings';
             }}>Settings</button
+        >
+        <button
+            class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-white"
+            on:click={() => {
+                fetch('/api/download').then((res) => {
+                    res.json().then((data) => {
+                        console.log(data);
+                    })
+                });
+            }}>Download</button
         >
     </div>
     <textarea
@@ -43,10 +58,24 @@
                         window.location.reload();
                     }
                     response.innerText = 'OpenAI: ' + data;
+                    messages.push({
+                        You: message,
+                        OpenAI: data,
+                    });
+                    fetch('/api/download', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            messages: messages
+                        })
+                    }).then((res) => {
+                        res.text().then((data) => {
+                            console.log(data);
+                        })
+                    });
+                    message = '';
+                    disabled = false;
                 });
             });
-            message = '';
-            disabled = false;
         }}>Submit</button
     >
     <div
