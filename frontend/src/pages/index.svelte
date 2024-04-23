@@ -44,44 +44,50 @@
     <button
         class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black"
         disabled={message.trim() == '' || disabled}
-        on:click={() => {
+        on:click={async () => {
             const container = document.querySelector('#container');
             const msg = document.createElement('span');
-            msg.innerText = 'You: ' + message;
+            msg.innerText = 'You:\n' + message;
             if (container) {
                 container.appendChild(msg);
             }
             disabled = true;
             const response = document.createElement('span');
-            response.innerText = 'OpenAI: Loading...';
             if (container) {
                 container.appendChild(response);
             }
-            fetch('/api/response', {
+            const res = await fetch('/api/response', {
                 method: 'POST',
                 body: JSON.stringify({
                     message: message,
                 }),
-            }).then((res) => {
-                res.text().then((data) => {
-                    if (data == 'null') {
-                        window.location.reload();
-                    }
-                    response.innerText = 'OpenAI: ' + data;
-                    messages.push({
-                        You: message,
-                        OpenAI: data,
-                    });
-                    fetch('/api/download', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            messages: messages,
-                        }),
-                    });
-                    message = '';
-                    disabled = false;
-                });
             });
+            if (res.body) {
+                const reader = res.body.getReader();
+                response.innerText = 'OpenAI:\n';
+                let data = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    const chunck = new TextDecoder().decode(value);
+                    response.innerText += chunck;
+                    data += chunck;
+                }
+                messages.push({
+                    You: message,
+                    OpenAI: data,
+                });
+                fetch('/api/download', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        messages: messages,
+                    }),
+                });
+            }
+            message = '';
+            disabled = false;
         }}>Submit</button
     >
     <div

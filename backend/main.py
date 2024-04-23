@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
 from uvicorn import run
 from os.path import isdir
 from datetime import datetime, timedelta
@@ -42,6 +42,17 @@ async def token(req: Request):
         return res
     except:
         return Response('Body is not a valid JSON with token property', 400)
+def openai_response(model: str, messages: list):
+    try:
+        res = openai.chat.completions.create(temperature=0.0, model=model, messages=messages, stream=True)
+        try:
+            for c in res:
+                if c.choices[0].delta.content:
+                    yield c.choices[0].delta.content
+        except:
+            raise Exception('There was an error')
+    except:
+        raise Exception('There was an error')
 @app.post('/api/response')
 async def response(req: Request):
     token = req.cookies.get('token')
@@ -54,12 +65,11 @@ async def response(req: Request):
             if message and message.strip() != '':
                 messages.append({ 'role': 'user', 'content': message })
             try:
-                res = openai.chat.completions.create(temperature=0.0, model=req.cookies.get('model') or 'gpt-3.5-turbo', messages=messages)
-                return Response(res.choices[0].message.content)
+                return StreamingResponse(openai_response(req.cookies.get('model') or 'gpt-3.5-turbo', messages))
             except:
                 return Response('There was an error', 400)
         except:
-            return Response('Body is not a valid JSON with message property', 400)
+            return Response('Body is not a valid JSON with message property', 400)   
 @app.get('/api/download')
 @app.post('/api/download')
 async def download(req: Request):
