@@ -65,22 +65,18 @@ async def response(req: Request):
 async def download(req: Request):
     if req.method == 'GET':
         messages = req.cookies.get('messages')
-        if messages and messages.strip() != '':
+        if messages:
             return JSONResponse({
-                model: req.cookies.get('model') or 'gpt-3.5-turbo',
-                prompt: req.cookies.get('prompt') or '',
-                messages: messages    
+                'model': req.cookies.get('model') or 'gpt-3.5-turbo',
+                'prompt': req.cookies.get('prompt') or '',
+                'messages': messages    
             })
     elif req.method == 'POST':
         try:
             body = await req.json()
             messages = body.get('messages')
             if messages:
-                res: JSONResponse = JSONResponse({
-                    'model': req.cookies.get('model') or 'gpt-3.5-turbo',
-                    'prompt': req.cookies.get('prompt') or '',
-                    'messages': messages
-                })
+                res: Response = Response('Successfully set messages')
                 res.set_cookie('messages', messages)
                 return res
         except:
@@ -108,7 +104,9 @@ def frontend(req: Request, path: str):
         return RedirectResponse('/login')
     if isdir(f'{d}/{path}'):
         path = f'{path}/index.html'
-    return FileResponse(f'{d}/{path}')
+    res: FileResponse = FileResponse(f'{d}/{path}')
+    res.delete_cookie('messages')
+    return res
 @app.exception_handler(500)
 def error(*args):
     return RedirectResponse('/')

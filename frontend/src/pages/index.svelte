@@ -1,7 +1,7 @@
 <script lang="ts">
     interface Chat {
-        You: string,
-        OpenAI: string
+        You: string;
+        OpenAI: string;
     }
     let message = '';
     let disabled = false;
@@ -19,10 +19,20 @@
         <button
             class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
-                fetch('/api/download').then((res) => {
-                    res.json().then((data) => {
-                        console.log(data);
-                    })
+                fetch('/api/download').then(async (res) => {
+                    if (!(await res.json()).messages) {
+                        return
+                    }
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'chat.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
                 });
             }}>Download</button
         >
