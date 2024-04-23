@@ -67,10 +67,6 @@
                         body: JSON.stringify({
                             messages: messages
                         })
-                    }).then((res) => {
-                        res.text().then((data) => {
-                            console.log(data);
-                        })
                     });
                     message = '';
                     disabled = false;

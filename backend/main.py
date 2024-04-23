@@ -75,11 +75,11 @@ async def download(req: Request):
         try:
             body = await req.json()
             messages = body.get('messages')
-            if messages and messages.strip() != '':
+            if messages:
                 res: JSONResponse = JSONResponse({
-                    model: req.cookies.get('model') or 'gpt-3.5-turbo',
-                    prompt: req.cookies.get('prompt') or '',
-                    messages: messages
+                    'model': req.cookies.get('model') or 'gpt-3.5-turbo',
+                    'prompt': req.cookies.get('prompt') or '',
+                    'messages': messages
                 })
                 res.set_cookie('messages', messages)
                 return res
