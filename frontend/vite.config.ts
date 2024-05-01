@@ -4,8 +4,5 @@ import { multip } from 'vite-plugin-multip'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(), multip()],
-  build: {
-    emptyOutDir: true
-  }
+  plugins: [svelte(), multip()]
 })
