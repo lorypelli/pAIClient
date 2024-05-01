@@ -104,8 +104,6 @@ def frontend(req: Request, path: str):
             res = RedirectResponse('/login')
             res.delete_cookie('token')
             return res
-    if path == 'favicon.ico':
-        return FileResponse(f'{d}/favicon.ico')
     if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
         return RedirectResponse('/login')
     if path == 'login' and req.cookies.get('token'):
