@@ -16,10 +16,10 @@ async def config(req: Request):
             body = await req.json()
             model = body.get('model')
             res: Response = Response('Successfully set model or prompt')
-            if model is not None:
+            if model and model.strip() != '':
                 res.set_cookie('model', model, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
             prompt = body.get('prompt')
-            if prompt is not None:
+            if prompt and prompt.strip() != '':
                 res.set_cookie('prompt', prompt, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
             return res
         except:
