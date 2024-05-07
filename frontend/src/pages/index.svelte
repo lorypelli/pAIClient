@@ -72,40 +72,36 @@
                 container.appendChild(response);
             }
             controller = new AbortController();
-            try {
-                const res = await fetch('/api/response', {
-                    signal: controller.signal,
+            const res = await fetch('/api/response', {
+                signal: controller.signal,
+                method: 'POST',
+                body: JSON.stringify({
+                    messages: messages,
+                }),
+            });
+            if (res.body) {
+                const reader = res.body.getReader();
+                response.innerText = 'OpenAI:\n';
+                let data = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    const chunck = new TextDecoder().decode(value);
+                    response.innerText += chunck;
+                    data += chunck;
+                }
+                messages.push({
+                    You: message,
+                    OpenAI: data,
+                });
+                fetch('/api/download', {
                     method: 'POST',
                     body: JSON.stringify({
                         messages: messages,
                     }),
                 });
-                if (res.body) {
-                    const reader = res.body.getReader();
-                    response.innerText = 'OpenAI:\n';
-                    let data = '';
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) {
-                            break;
-                        }
-                        const chunck = new TextDecoder().decode(value);
-                        response.innerText += chunck;
-                        data += chunck;
-                    }
-                    messages.push({
-                        You: message,
-                        OpenAI: data,
-                    });
-                    fetch('/api/download', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            messages: messages,
-                        }),
-                    });
-                }
-            } catch {
-                return;
             }
             message = '';
             disabled = false;
