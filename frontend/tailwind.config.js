@@ -18,7 +18,7 @@ export default {
                 container: '85vh'
             },
             maxHeight: {
-                container_fit: 'calc(85vh - 9.5rem)'
+                container_fit: 'calc(85vh - 11rem)'
             }
         }
     },

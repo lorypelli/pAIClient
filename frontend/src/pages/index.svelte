@@ -8,6 +8,55 @@
     let stopped: boolean;
     let controller: AbortController;
     let messages: Chat[] = [];
+    async function makeRequest() {
+        stopped = false;
+        const container = document.querySelector('#container');
+        const msg = document.createElement('span');
+        msg.innerText = 'You:\n' + message;
+        if (container) {
+            container.appendChild(msg);
+        }
+        disabled = true;
+        const response = document.createElement('span');
+        if (container) {
+            container.appendChild(response);
+        }
+        controller = new AbortController();
+        const res = await fetch('/api/response', {
+            signal: controller.signal,
+            method: 'POST',
+            body: JSON.stringify({
+                message: message,
+            }),
+        });
+        if (res.body) {
+            const reader = res.body.getReader();
+            response.innerText = 'OpenAI:\n';
+            let data = '';
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    break;
+                }
+                const chunck = new TextDecoder().decode(value);
+                response.innerText += chunck;
+                data += chunck;
+            }
+            messages.push({
+                You: message,
+                OpenAI: data,
+            });
+            fetch('/api/download', {
+                method: 'POST',
+                body: JSON.stringify({
+                    messages: messages,
+                }),
+            });
+        }
+        message = '';
+        disabled = false;
+        stopped = true;
+    }
 </script>
 
 <div class="h-container w-container relative rounded-2xl border-2 border-black">
@@ -43,7 +92,7 @@
         <button
             class="{stopped == false
                 ? 'block'
-                : 'hidden'} absolute bottom-28 rounded-md border-4 border-gray-500 bg-black text-white"
+                : 'hidden'} absolute bottom-32 rounded-md border-4 border-gray-500 bg-black text-white"
             on:click={() => {
                 controller.abort();
                 stopped = true;
@@ -51,61 +100,23 @@
             }}>Stop Generating</button
         >
     </div>
+    <div class="flex justify-center">
+        <span class="flex absolute bottom-24">Shift + Enter to create a newline</span>
+    </div>
     <textarea
         class="w-container_fit absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black"
         bind:value={message}
+        on:keydown={async (e) => {
+            if (!e.shiftKey && e.key == 'Enter') {
+                await makeRequest();
+            }
+        }}
     />
     <button
         class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black"
         disabled={message.trim() == '' || disabled}
         on:click={async () => {
-            stopped = false;
-            const container = document.querySelector('#container');
-            const msg = document.createElement('span');
-            msg.innerText = 'You:\n' + message;
-            if (container) {
-                container.appendChild(msg);
-            }
-            disabled = true;
-            const response = document.createElement('span');
-            if (container) {
-                container.appendChild(response);
-            }
-            controller = new AbortController();
-            const res = await fetch('/api/response', {
-                signal: controller.signal,
-                method: 'POST',
-                body: JSON.stringify({
-                    messages: messages,
-                }),
-            });
-            if (res.body) {
-                const reader = res.body.getReader();
-                response.innerText = 'OpenAI:\n';
-                let data = '';
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) {
-                        break;
-                    }
-                    const chunck = new TextDecoder().decode(value);
-                    response.innerText += chunck;
-                    data += chunck;
-                }
-                messages.push({
-                    You: message,
-                    OpenAI: data,
-                });
-                fetch('/api/download', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        messages: messages,
-                    }),
-                });
-            }
-            message = '';
-            disabled = false;
-            stopped = true;
+            await makeRequest();
         }}>Submit</button
     >
     <div
