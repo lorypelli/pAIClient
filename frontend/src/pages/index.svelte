@@ -12,12 +12,14 @@
         stopped = false;
         const container = document.querySelector('#container');
         const msg = document.createElement('span');
+        msg.classList.add('you')
         msg.innerText = 'You:\n' + message;
         if (container) {
             container.appendChild(msg);
         }
         disabled = true;
         const response = document.createElement('span');
+        response.classList.add('openai')
         if (container) {
             container.appendChild(response);
         }
@@ -46,12 +48,6 @@
                 You: message,
                 OpenAI: data,
             });
-            fetch('/api/download', {
-                method: 'POST',
-                body: JSON.stringify({
-                    messages: messages,
-                }),
-            });
         }
         message = '';
         disabled = false;
@@ -70,21 +66,16 @@
         <button
             class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
-                fetch('/api/download').then(async (res) => {
-                    const blob = await res.blob();
-                    if (messages.length == 0) {
-                        return;
-                    }
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = 'chat.json';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                });
+                const file = new File([JSON.stringify(messages)], 'chat.json')
+                const url = window.URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'chat.json';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
             }}>Download</button
         >
     </div>

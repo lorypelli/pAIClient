@@ -1,12 +1,5 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    let saved = false;
-    function beforeUnload(e: BeforeUnloadEvent) {
-        if (!saved) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    }
     let model = '';
     let prompt = '';
     onMount(() => {
@@ -16,16 +9,16 @@
                 prompt = data.prompt;
             });
         });
-        window.addEventListener('beforeunload', beforeUnload);
-        return () => {
-            window.removeEventListener('beforeunload', beforeUnload);
-        };
     });
 </script>
 
-<div class="flex h-max flex-col items-center justify-center space-y-1">
+<form
+    class="flex h-max flex-col items-center justify-center space-y-1"
+    method="POST"
+    action="/api/config"
+>
     <span>Model:</span>
-    <select bind:value={model}>
+    <select bind:value={model} name="model" required>
         <option class="text-center">gpt-4-turbo</option>
         <option class="text-center">gpt-4</option>
         <option class="text-center">gpt-3.5-turbo</option>
@@ -35,19 +28,9 @@
         class="resize-none rounded-xl border-2 border-black"
         bind:value={prompt}
         rows="10"
+        name="prompt"
     />
-    <button
-        class="w-60 rounded-xl border-2 border-black"
-        on:click={() => {
-            fetch('/api/config', {
-                method: 'POST',
-                body: JSON.stringify({
-                    model: model,
-                    prompt: prompt,
-                }),
-            });
-            saved = true;
-            window.location.href = '/';
-        }}>Save</button
+    <button class="w-60 rounded-xl border-2 border-black" type="submit"
+        >Save</button
     >
-</div>
+</form>
