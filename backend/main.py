@@ -28,7 +28,6 @@ async def token(token: str = Form()):
         res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
         res.set_cookie('prompt', '', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
         return res
-
 def openai_response(model: str, messages: list):
     try:
         res = openai.chat.completions.create(temperature=0.0, model=model, messages=messages, stream=True)

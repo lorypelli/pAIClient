@@ -12,14 +12,12 @@
         stopped = false;
         const container = document.querySelector('#container');
         const msg = document.createElement('span');
-        msg.classList.add('you')
         msg.innerText = 'You:\n' + message;
         if (container) {
             container.appendChild(msg);
         }
         disabled = true;
         const response = document.createElement('span');
-        response.classList.add('openai')
         if (container) {
             container.appendChild(response);
         }
