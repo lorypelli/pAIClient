@@ -19,6 +19,7 @@
 >
     <span>Model:</span>
     <select bind:value={model} name="model" required>
+        <option class="text-center">gpt-4o</option>
         <option class="text-center">gpt-4-turbo</option>
         <option class="text-center">gpt-4</option>
         <option class="text-center">gpt-3.5-turbo</option>
