@@ -13,17 +13,17 @@ def env():
     load_dotenv()
     return getenv('OPENAI_API_KEY', '')
 @app.get('/api/config')
-async def config(req: Request):
+def config(req: Request):
     return JSONResponse({ 'model': req.cookies.get('model') or 'gpt-3.5-turbo', 'prompt': req.cookies.get('prompt') or '' })
 @app.post('/api/config')
-async def config(model: str = Form(), prompt: str = Form('')):
+def config(model: str = Form(), prompt: str = Form('')):
     res: Response = RedirectResponse('/')
     if model and model.strip() != '':
         res.set_cookie('model', model, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
         res.set_cookie('prompt', prompt, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
     return res
 @app.post('/api/login')
-async def token(token: str = Form()):
+def token(token: str = Form()):
     res: Response = RedirectResponse('/')
     try:
         gpt.api_key = token
