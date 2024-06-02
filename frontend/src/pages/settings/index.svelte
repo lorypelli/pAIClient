@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     let model = '';
     let prompt = '';
+    let models = ['gpt-4o', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'];
     onMount(() => {
         fetch('/api/config').then((res) => {
             res.json().then((data) => {
@@ -19,10 +20,9 @@
 >
     <span>Model:</span>
     <select bind:value={model} name="model" required>
-        <option class="text-center">gpt-4o</option>
-        <option class="text-center">gpt-4-turbo</option>
-        <option class="text-center">gpt-4</option>
-        <option class="text-center">gpt-3.5-turbo</option>
+        {#each models as m}
+            <option class="text-center">{m}</option>
+        {/each}
     </select>
     <span>Prompt:</span>
     <textarea

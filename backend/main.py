@@ -1,11 +1,17 @@
 from fastapi import FastAPI, Request, Response, Form, Query
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
 from uvicorn import run
+from dotenv import load_dotenv
+from os import getenv
 from os.path import isdir
-from datetime import datetime, timedelta
-from requests import get
-import openai
+from datetime import timedelta
+from openai import Client
+gpt = Client(api_key='')
 app = FastAPI(docs_url='/api/docs', redoc_url=None)
+@app.get('/api/env')
+def env():
+    load_dotenv()
+    return getenv('OPENAI_API_KEY', '')
 @app.get('/api/config')
 async def config(req: Request):
     return JSONResponse({ 'model': req.cookies.get('model') or 'gpt-3.5-turbo', 'prompt': req.cookies.get('prompt') or '' })
@@ -18,19 +24,19 @@ async def config(model: str = Form(), prompt: str = Form('')):
     return res
 @app.post('/api/login')
 async def token(token: str = Form()):
-        res: Response = RedirectResponse('/')
-        try:
-            openai.api_key = token
-            openai.models.list()
-        except:
-            return RedirectResponse('/login')
-        res.set_cookie('token', token, max_age=int(timedelta(21).total_seconds()), secure=True, httponly=True)
-        res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
-        res.set_cookie('prompt', '', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
-        return res
+    res: Response = RedirectResponse('/')
+    try:
+        gpt.api_key = token
+        gpt.models.list()
+    except:
+        return RedirectResponse('/login')
+    res.set_cookie('token', token, max_age=int(timedelta(21).total_seconds()), secure=True, httponly=True)
+    res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
+    res.set_cookie('prompt', '', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
+    return res
 def openai_response(model: str, messages: list):
     try:
-        res = openai.chat.completions.create(temperature=0.0, model=model, messages=messages, stream=True)
+        res = gpt.chat.completions.create(temperature=0.0, model=model, messages=messages, stream=True)
         try:
             for c in res:
                 if c.choices[0].delta.content:
@@ -43,7 +49,7 @@ def openai_response(model: str, messages: list):
 async def response(req: Request):
     token = req.cookies.get('token')
     if token and token.strip() != '':
-        openai.api_key = token
+        gpt.api_key = token
         try:
             body = await req.json()
             message = body.get('message')
@@ -64,8 +70,8 @@ def frontend(req: Request, path: str):
     token = req.cookies.get('token')
     if token and token.strip() != '':
         try:
-            openai.api_key = token
-            openai.models.list()
+            gpt.api_key = token
+            gpt.models.list()
         except:
             res = RedirectResponse('/login')
             res.delete_cookie('token')
@@ -74,8 +80,6 @@ def frontend(req: Request, path: str):
         return RedirectResponse('/login')
     if path == 'login' and req.cookies.get('token'):
         return RedirectResponse('/')
-    if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
-        return RedirectResponse('/login')
     if isdir(f'{d}/{path}'):
         path = f'{path}/index.html'
     res: FileResponse = FileResponse(f'{d}/{path}')

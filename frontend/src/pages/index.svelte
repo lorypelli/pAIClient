@@ -64,7 +64,7 @@
         <button
             class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
-                const file = new File([JSON.stringify(messages)], 'chat.json')
+                const file = new File([JSON.stringify(messages)], 'chat.json');
                 const url = window.URL.createObjectURL(file);
                 const a = document.createElement('a');
                 a.style.display = 'none';
@@ -90,7 +90,9 @@
         >
     </div>
     <div class="flex justify-center">
-        <span class="flex absolute bottom-24">Shift + Enter to create a newline</span>
+        <span class="absolute bottom-24 flex"
+            >Shift + Enter to create a newline</span
+        >
     </div>
     <textarea
         class="w-container_fit absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black"
