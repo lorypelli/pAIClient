@@ -55,12 +55,12 @@
 
 <div class="h-container w-container relative rounded-2xl border-2 border-black">
     <div class="h-12 w-full">
-        <button
-            class="absolute m-4 h-7 w-24 rounded-2xl border-2 border-black bg-white"
-            on:click={() => {
-                window.location.href = '/settings';
-            }}>Settings</button
-        >
+        <a href="/settings">
+            <button
+                class="absolute m-4 h-7 w-24 rounded-2xl border-2 border-black bg-white"
+                >Settings</button
+            >
+        </a>
         <button
             class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-white"
             on:click={() => {
