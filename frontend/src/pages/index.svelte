@@ -40,6 +40,9 @@
                 }
                 const chunck = new TextDecoder().decode(value);
                 response.innerText += chunck;
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
                 data += chunck;
             }
             messages.push({
@@ -99,6 +102,7 @@
         bind:value={message}
         on:keydown={async (e) => {
             if (!e.shiftKey && e.key == 'Enter') {
+                e.preventDefault();
                 await makeRequest();
             }
         }}

@@ -17,11 +17,14 @@
     <button class="w-60 rounded-xl border-2 border-black" type="submit"
         >Login</button
     >
-    <button class="w-60 rounded-xl border-2 border-black" on:click={() => {
-        fetch('/api/env').then((res => {
-            res.json().then((data => {
-                token = data;
-            }))
-        }))
-    }}>Load from Env</button>
+    <button
+        class="w-60 rounded-xl border-2 border-black"
+        on:click={() => {
+            fetch('/api/env').then((res) => {
+                res.json().then((data) => {
+                    token = data;
+                });
+            });
+        }}>Load from Env</button
+    >
 </form>
