@@ -113,6 +113,10 @@
         class="w-container_fit absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black"
         bind:value={message}
         on:keydown={async (e) => {
+            if (e.key == 'Enter' && (message.trim() == '' || disabled)) {
+                e.preventDefault();
+                return;
+            }
             if (!e.shiftKey && e.key == 'Enter') {
                 e.preventDefault();
                 await makeRequest();
@@ -123,7 +127,9 @@
         class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black"
         disabled={message.trim() == '' || disabled}
         on:click={async () => {
-            await makeRequest();
+            if (message.trim() != '' && !disabled) {
+                await makeRequest();
+            }
         }}>Submit</button
     >
     <div
