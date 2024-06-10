@@ -1,92 +1,158 @@
-from fastapi import FastAPI, Request, Response, Form, Query
-from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
-from uvicorn import run
-from dotenv import load_dotenv
+from datetime import timedelta
 from os import getenv
 from os.path import isdir
-from datetime import timedelta
+from typing import Annotated
+
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, Form, Query, Request, Response
+from fastapi.responses import (
+    FileResponse,
+    JSONResponse,
+    PlainTextResponse,
+    RedirectResponse,
+    StreamingResponse,
+)
+from fastapi.security import APIKeyHeader
 from openai import Client
-gpt = Client(api_key='')
-app = FastAPI(docs_url='/api/docs', redoc_url=None)
-@app.get('/api/env')
+from uvicorn import run
+
+gpt = Client(api_key="")
+app = FastAPI(docs_url="/api/docs", redoc_url=None)
+auth = APIKeyHeader(name="Authorization")
+
+
+@app.get("/api/env")
 def env():
     load_dotenv()
-    return getenv('OPENAI_API_KEY', '')
-@app.get('/api/config')
+    return PlainTextResponse(getenv("OPENAI_API_KEY", ""))
+
+
+@app.get("/api/token")
+def token(req: Request):
+    return PlainTextResponse(req.cookies.get("token") or "")
+
+
+@app.get("/api/config")
 def config(req: Request):
-    return JSONResponse({ 'model': req.cookies.get('model') or 'gpt-3.5-turbo', 'prompt': req.cookies.get('prompt') or '' })
-@app.post('/api/config')
-def config(model: str = Form(), prompt: str = Form('')):
-    res: Response = RedirectResponse('/')
-    if model and model.strip() != '':
-        res.set_cookie('model', model, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
-        res.set_cookie('prompt', prompt, max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
+    return JSONResponse(
+        {
+            "model": req.cookies.get("model") or "gpt-3.5-turbo",
+            "prompt": req.cookies.get("prompt") or "",
+        }
+    )
+
+
+@app.post("/api/config")
+def config(model: str = Form(), prompt: str = Form("")):
+    res: Response = RedirectResponse("/")
+    if model and model.strip() != "":
+        res.set_cookie(
+            "model",
+            model,
+            max_age=int(timedelta(90).total_seconds()),
+            secure=True,
+            httponly=True,
+        )
+        res.set_cookie(
+            "prompt",
+            prompt,
+            max_age=int(timedelta(90).total_seconds()),
+            secure=True,
+            httponly=True,
+        )
     return res
-@app.post('/api/login')
+
+
+@app.post("/api/login")
 def token(token: str = Form()):
-    res: Response = RedirectResponse('/')
+    res: Response = RedirectResponse("/")
     try:
         gpt.api_key = token
         gpt.models.list()
     except:
-        return RedirectResponse('/login')
-    res.set_cookie('token', token, max_age=int(timedelta(21).total_seconds()), secure=True, httponly=True)
-    res.set_cookie('model', 'gpt-3.5-turbo', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
-    res.set_cookie('prompt', '', max_age=int(timedelta(90).total_seconds()), secure=True, httponly=True)
+        return RedirectResponse("/login")
+    res.set_cookie(
+        "token",
+        token,
+        max_age=int(timedelta(21).total_seconds()),
+        secure=True,
+        httponly=True,
+    )
+    res.set_cookie(
+        "model",
+        "gpt-3.5-turbo",
+        max_age=int(timedelta(90).total_seconds()),
+        secure=True,
+        httponly=True,
+    )
+    res.set_cookie(
+        "prompt",
+        "",
+        max_age=int(timedelta(90).total_seconds()),
+        secure=True,
+        httponly=True,
+    )
     return res
+
+
 def openai_response(model: str, messages: list):
     try:
-        res = gpt.chat.completions.create(temperature=0.0, model=model, messages=messages, stream=True)
-        try:
-            for c in res:
-                if c.choices[0].delta.content:
-                    yield c.choices[0].delta.content
-        except:
-            raise Exception('There was an error')
+        res = gpt.chat.completions.create(
+            temperature=0.0, model=model, messages=messages, stream=True
+        )
+        for c in res:
+            if c.choices[0].delta.content:
+                yield c.choices[0].delta.content
     except:
-        raise Exception('There was an error')
-@app.post('/api/response')
-async def response(req: Request):
-    token = req.cookies.get('token')
-    if token and token.strip() != '':
+        raise Exception("There was an error")
+
+
+@app.post("/api/response")
+async def response(token: Annotated[str, Depends(auth)], req: Request):
+    try:
         gpt.api_key = token
-        try:
-            body = await req.json()
-            message = body.get('message')
-            messages = [{ 'role': 'system', 'content': req.cookies.get('prompt') or '' }]
-            if message and message.strip() != '':
-                messages.append({ 'role': 'user', 'content': message })
-            try:
-                return StreamingResponse(openai_response(req.cookies.get('model') or 'gpt-3.5-turbo', messages))
-            except:
-                return Response('There was an error', 400)
-        except:
-            return Response('Body is not a valid JSON with message property', 400)   
-@app.get('/{path:path}')
-@app.post('/{path:path}')
+        gpt.models.list()
+        body = await req.json()
+        message = body.get("message")
+        messages = [{"role": "system", "content": req.cookies.get("prompt") or ""}]
+        if message and message.strip() != "":
+            messages.append({"role": "user", "content": message})
+        return StreamingResponse(
+            openai_response(req.cookies.get("model") or "gpt-3.5-turbo", messages)
+        )
+    except:
+        return RedirectResponse("/login")
+
+
+@app.get("/{path:path}")
+@app.post("/{path:path}")
 def frontend(req: Request, path: str):
-    path = path.replace('index.html', '')
-    d = '../frontend/dist'
-    token = req.cookies.get('token')
-    if token and token.strip() != '':
+    path = path.replace("index.html", "")
+    d = "../frontend/dist"
+    token = req.cookies.get("token")
+    if token and token.strip() != "":
         try:
             gpt.api_key = token
             gpt.models.list()
         except:
-            res = RedirectResponse('/login')
-            res.delete_cookie('token')
+            res = RedirectResponse("/login")
+            res.delete_cookie("token")
             return res
-    if path != 'login' and isdir(f'{d}/{path}') and not req.cookies.get('token'):
-        return RedirectResponse('/login')
-    if path == 'login' and req.cookies.get('token'):
-        return RedirectResponse('/')
-    if isdir(f'{d}/{path}'):
-        path = f'{path}/index.html'
-    res: FileResponse = FileResponse(f'{d}/{path}')
-    res.delete_cookie('messages')
+    if path != "login" and isdir(f"{d}/{path}") and not req.cookies.get("token"):
+        return RedirectResponse("/login")
+    if path == "login" and req.cookies.get("token"):
+        return RedirectResponse("/")
+    if isdir(f"{d}/{path}"):
+        path = f"{path}/index.html"
+    res: FileResponse = FileResponse(f"{d}/{path}")
+    res.delete_cookie("messages")
     return res
+
+
 @app.exception_handler(500)
 def error(*args):
-    return RedirectResponse('/')
-if __name__ == '__main__':
-    run('main:app', port=5173, reload=True)
+    return RedirectResponse("/")
+
+
+if __name__ == "__main__":
+    run("main:app", port=5173, reload=True)

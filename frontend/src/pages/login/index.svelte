@@ -21,7 +21,7 @@
         class="w-60 rounded-xl border-2 border-black"
         on:click={() => {
             fetch('/api/env').then((res) => {
-                res.json().then((data) => {
+                res.text().then((data) => {
                     token = data;
                 });
             });
