@@ -3,7 +3,7 @@
 </script>
 
 <form
-    class="flex h-max flex-col items-center justify-center space-y-1"
+    class="flex flex-col items-center justify-center space-y-1"
     method="POST"
     action="/api/login"
 >

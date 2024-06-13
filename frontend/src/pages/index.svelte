@@ -69,7 +69,7 @@
 </script>
 
 <div class="h-container w-container relative rounded-2xl border-2 border-black">
-    <div class="h-12 w-full">
+    <div class="h-12">
         <a href="/settings">
             <button
                 class="absolute m-4 h-7 w-24 rounded-2xl border-2 border-black bg-white"
