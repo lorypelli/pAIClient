@@ -19,19 +19,25 @@
     action="/api/config"
 >
     <span>Model:</span>
-    <select bind:value={model} name="model" required>
+    <select
+        class="bg-primary dark:bg-primary_dark"
+        bind:value={model}
+        name="model"
+        required
+    >
         {#each models as m}
             <option class="text-center">{m}</option>
         {/each}
     </select>
     <span>Prompt:</span>
     <textarea
-        class="resize-none rounded-xl border-2 border-black"
+        class="resize-none rounded-xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
         bind:value={prompt}
-        rows="10"
         name="prompt"
+        rows="10"
     />
-    <button class="w-60 rounded-xl border-2 border-black" type="submit"
-        >Save</button
+    <button
+        class="w-60 rounded-xl border-2 border-black dark:border-white"
+        type="submit">Save</button
     >
 </form>

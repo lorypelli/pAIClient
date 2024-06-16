@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 * {
-    @apply font-custom;
+    @apply font-custom text-primary_dark dark:text-primary;
 }
 
 :focus {
@@ -15,5 +15,5 @@ button:disabled {
 }
 
 body {
-    @apply flex h-max flex-col items-center justify-center;
+    @apply flex h-max flex-col items-center justify-center bg-primary dark:bg-primary_dark;
 }
