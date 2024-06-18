@@ -1,22 +1,21 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     interface Chat {
         You: string;
         OpenAI: string;
     }
     let message = '';
-    let token = '';
+    let token = window.token || '';
     let disabled = false;
     let stopped: boolean;
     let controller: AbortController;
     let messages: Chat[] = [];
-    onMount(() => {
+    /*onMount(() => {
         fetch('/api/token').then((res) => {
             res.text().then((data) => {
                 token = data;
             });
         });
-    });
+    });*/
     async function makeRequest() {
         stopped = false;
         const container = document.querySelector('#container');

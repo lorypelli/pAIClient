@@ -1,16 +1,6 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    let model = '';
-    let prompt = '';
+    let { model, prompt } = window.config;
     let models = ['gpt-4o', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'];
-    onMount(() => {
-        fetch('/api/config').then((res) => {
-            res.json().then((data) => {
-                model = data.model;
-                prompt = data.prompt;
-            });
-        });
-    });
 </script>
 
 <form
