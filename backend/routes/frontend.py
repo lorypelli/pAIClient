@@ -27,11 +27,7 @@ def frontend(req: Request, path: str):
         html_content = f.read()
         html_content = html_content.replace(
             "</head>",
-            f"""<script>
-            window.token='{req.cookies.get('token') or ''}'
-            window.config={{ model: '{req.cookies.get('model') or 'gpt-3.5-turbo'}', prompt: '{req.cookies.get('prompt') or ''}' }}
-            </script>
-            </head>""",
+            f"<script>window.token='{req.cookies.get('token') or ''}';window.config={{model:'{req.cookies.get('model') or 'gpt-3.5-turbo'}',prompt:'{req.cookies.get('prompt') or ''}'}};</script></head>",
         )
     res: FileResponse | HTMLResponse = FileResponse(f"{d}/{path}")
     if path.endswith(".html"):
