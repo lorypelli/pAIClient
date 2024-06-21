@@ -1,3 +1,3 @@
-from openai import Client
+from openai import OpenAI
 
-gpt = Client(api_key="")
+gpt = OpenAI(api_key="")

@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing_extensions import Annotated
 
 from fastapi import Depends, Request
 from fastapi.responses import RedirectResponse, StreamingResponse
