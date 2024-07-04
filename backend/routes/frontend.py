@@ -1,7 +1,7 @@
 from os.path import isdir
 
 from fastapi import Request
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from utils.client import gpt
 
 
@@ -23,14 +23,6 @@ def frontend(req: Request, path: str):
         return RedirectResponse("/")
     if isdir(f"{d}/{path}"):
         path = f"{path}/index.html"
-    with open(f"{d}/{path}") as f:
-        html_content = f.read()
-        html_content = html_content.replace(
-            "</head>",
-            f"<script>window.token='{req.cookies.get('token') or ''}';window.config={{model:'{req.cookies.get('model') or 'gpt-3.5-turbo'}',prompt:'{req.cookies.get('prompt') or ''}'}};</script></head>",
-        )
-    res: FileResponse | HTMLResponse = FileResponse(f"{d}/{path}")
-    if path.endswith(".html"):
-        res = HTMLResponse(html_content)
+    res: FileResponse = FileResponse(f"{d}/{path}")
     res.delete_cookie("messages")
     return res

@@ -1,5 +1,12 @@
 <script lang="ts">
-    let { model, prompt } = window.config;
+    let model = '';
+    let prompt = '';
+    fetch('/api/config').then((res) => {
+        res.json().then((data) => {
+            model = data.model;
+            prompt = data.prompt;
+        });
+    });
     let models = ['gpt-4o', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'];
 </script>
 
@@ -21,7 +28,7 @@
     </select>
     <span>Prompt:</span>
     <textarea
-        class="resize-none rounded-xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
+        class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary resize-none rounded-xl border-2 border-black dark:border-white"
         bind:value={prompt}
         name="prompt"
         rows="10"

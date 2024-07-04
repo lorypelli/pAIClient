@@ -9,17 +9,17 @@
 >
     <span>Token:</span>
     <textarea
-        class="resize-none rounded-xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
+        class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary resize-none rounded-xl border-2 border-black dark:border-white"
         bind:value={token}
         name="token"
         required
     />
     <button
-        class="w-60 rounded-xl border-2 border-black text-primary_dark dark:border-white dark:text-primary"
+        class="text-primary_dark dark:text-primary w-60 rounded-xl border-2 border-black dark:border-white"
         type="submit">Login</button
     >
     <button
-        class="w-60 rounded-xl border-2 border-black text-primary_dark dark:border-white dark:text-primary"
+        class="text-primary_dark dark:text-primary w-60 rounded-xl border-2 border-black dark:border-white"
         on:click={() => {
             fetch('/api/env').then((res) => {
                 res.text().then((data) => {

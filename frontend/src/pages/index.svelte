@@ -3,19 +3,17 @@
         You: string;
         OpenAI: string;
     }
+    let token = '';
+    fetch('/api/token').then((res) => {
+        res.text().then((data) => {
+            token = data;
+        });
+    });
     let message = '';
-    let token = window.token || '';
     let disabled = false;
     let stopped: boolean;
     let controller: AbortController;
     let messages: Chat[] = [];
-    /*onMount(() => {
-        fetch('/api/token').then((res) => {
-            res.text().then((data) => {
-                token = data;
-            });
-        });
-    });*/
     async function makeRequest() {
         stopped = false;
         const container = document.querySelector('#container');
@@ -68,17 +66,17 @@
 </script>
 
 <div
-    class="relative h-container w-container rounded-2xl border-2 border-black dark:border-white"
+    class="h-container w-container relative rounded-2xl border-2 border-black dark:border-white"
 >
     <div class="h-12">
         <a href="/settings">
             <button
-                class="absolute m-4 h-7 w-32 rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
+                class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute m-4 h-7 w-32 rounded-2xl border-2 border-black dark:border-white"
                 >Settings</button
             >
         </a>
         <button
-            class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
+            class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black dark:border-white"
             on:click={() => {
                 const file = new File([JSON.stringify(messages)], 'chat.json');
                 const url = window.URL.createObjectURL(file);
@@ -97,7 +95,7 @@
         <button
             class="{stopped == false
                 ? 'block'
-                : 'hidden'} absolute bottom-32 rounded-md border-4 border-gray-500 bg-black text-primary"
+                : 'hidden'} text-primary absolute bottom-32 rounded-md border-4 border-gray-500 bg-black"
             on:click={() => {
                 controller.abort();
                 stopped = true;
@@ -111,7 +109,7 @@
         >
     </div>
     <textarea
-        class="absolute bottom-0 m-4 h-20 w-container_fit resize-none rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
+        class="w-container_fit bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black dark:border-white"
         bind:value={message}
         on:keydown={async (e) => {
             if (e.key == 'Enter' && (message.trim() == '' || disabled)) {
@@ -125,7 +123,7 @@
         }}
     />
     <button
-        class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black text-primary_dark dark:border-white dark:text-primary"
+        class="text-primary_dark dark:text-primary absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black dark:border-white"
         disabled={message.trim() == '' || disabled}
         on:click={async () => {
             if (message.trim() != '' && !disabled) {
@@ -135,6 +133,6 @@
     >
     <div
         id="container"
-        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-2"
+        class="max-h-container_fit flex flex-col overflow-auto p-4 pt-2"
     />
 </div>
