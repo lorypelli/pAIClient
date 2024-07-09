@@ -14,13 +14,13 @@ def frontend(req: Request, path: str):
             gpt.api_key = token
             gpt.models.list()
         except:
-            res = RedirectResponse("/login")
+            res = RedirectResponse("/login", 302)
             res.delete_cookie("token")
             return res
     if path != "login" and isdir(f"{d}/{path}") and not req.cookies.get("token"):
-        return RedirectResponse("/login")
+        return RedirectResponse("/login", 302)
     if path == "login" and req.cookies.get("token"):
-        return RedirectResponse("/")
+        return RedirectResponse("/", 302)
     if isdir(f"{d}/{path}"):
         path = f"{path}/index.html"
     res: FileResponse = FileResponse(f"{d}/{path}")

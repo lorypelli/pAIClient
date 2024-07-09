@@ -14,7 +14,7 @@ def get_config(req: Request):
 
 
 def post_config(model: str = Form(), prompt: str = Form("")):
-    res: Response = RedirectResponse("/")
+    res: Response = RedirectResponse("/", 302)
     if model and model.strip() != "":
         res.set_cookie(
             "model",

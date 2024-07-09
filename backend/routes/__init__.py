@@ -16,4 +16,4 @@ router.add_api_route("/api/login", login, methods=["POST"])
 router.add_api_route("/api/response", response, methods=["POST"])
 router.add_api_route("/api/token", token, methods=["GET"])
 
-router.add_api_route("/{path:path}", frontend, methods=["GET", "POST"])
+router.add_api_route("/{path:path}", frontend, methods=["GET"])

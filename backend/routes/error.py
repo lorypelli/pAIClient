@@ -2,4 +2,4 @@ from fastapi.responses import RedirectResponse
 
 
 def error(*args):
-    return RedirectResponse("/")
+    return RedirectResponse("/", 302)

@@ -6,12 +6,12 @@ from utils.client import gpt
 
 
 def login(token: str = Form()):
-    res: Response = RedirectResponse("/")
+    res: Response = RedirectResponse("/", 302)
     try:
         gpt.api_key = token
         gpt.models.list()
     except:
-        return RedirectResponse("/login")
+        return RedirectResponse("/login", 302)
     res.set_cookie(
         "token",
         token,

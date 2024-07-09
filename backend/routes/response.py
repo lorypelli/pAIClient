@@ -22,4 +22,4 @@ async def response(token: Annotated[str, Depends(auth)], req: Request):
             openai_response(req.cookies.get("model") or "gpt-3.5-turbo", messages)
         )
     except:
-        return RedirectResponse("/login")
+        return RedirectResponse("/login", 302)

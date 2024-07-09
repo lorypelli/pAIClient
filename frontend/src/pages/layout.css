@@ -13,7 +13,3 @@
 button:disabled {
     @apply cursor-not-allowed;
 }
-
-body {
-    @apply flex h-max flex-col items-center justify-center bg-primary dark:bg-primary_dark;
-}
