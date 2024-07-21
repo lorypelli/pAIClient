@@ -28,7 +28,7 @@
     </select>
     <span>Prompt:</span>
     <textarea
-        class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary resize-none rounded-xl border-2 border-black dark:border-white"
+        class="resize-none rounded-xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
         bind:value={prompt}
         name="prompt"
         rows="10"

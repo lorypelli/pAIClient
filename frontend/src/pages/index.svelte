@@ -66,17 +66,17 @@
 </script>
 
 <div
-    class="h-container w-container relative rounded-2xl border-2 border-black dark:border-white"
+    class="relative h-container w-container rounded-2xl border-2 border-black dark:border-white"
 >
     <div class="h-12">
         <a href="/settings">
             <button
-                class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute m-4 h-7 w-32 rounded-2xl border-2 border-black dark:border-white"
+                class="absolute m-4 h-7 w-32 rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
                 >Settings</button
             >
         </a>
         <button
-            class="bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black dark:border-white"
+            class="absolute right-0 m-4 h-7 w-32 rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
             on:click={() => {
                 const file = new File([JSON.stringify(messages)], 'chat.json');
                 const url = window.URL.createObjectURL(file);
@@ -95,7 +95,7 @@
         <button
             class="{stopped == false
                 ? 'block'
-                : 'hidden'} text-primary absolute bottom-32 rounded-md border-4 border-gray-500 bg-black"
+                : 'hidden'} absolute bottom-32 rounded-md border-4 border-gray-500 bg-black text-primary"
             on:click={() => {
                 controller.abort();
                 stopped = true;
@@ -109,7 +109,7 @@
         >
     </div>
     <textarea
-        class="w-container_fit bg-primary text-primary_dark dark:bg-primary_dark dark:text-primary absolute bottom-0 m-4 h-20 resize-none rounded-2xl border-2 border-black dark:border-white"
+        class="absolute bottom-0 m-4 h-20 w-container_fit resize-none rounded-2xl border-2 border-black bg-primary text-primary_dark dark:border-white dark:bg-primary_dark dark:text-primary"
         bind:value={message}
         on:keydown={async (e) => {
             if (e.key == 'Enter' && (message.trim() == '' || disabled)) {
@@ -123,7 +123,7 @@
         }}
     />
     <button
-        class="text-primary_dark dark:text-primary absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black dark:border-white"
+        class="absolute bottom-0 right-0 m-4 mr-2 h-20 w-24 rounded-2xl border-2 border-black text-primary_dark disabled:cursor-not-allowed dark:border-white dark:text-primary"
         disabled={message.trim() == '' || disabled}
         on:click={async () => {
             if (message.trim() != '' && !disabled) {
@@ -133,6 +133,6 @@
     >
     <div
         id="container"
-        class="max-h-container_fit flex flex-col overflow-auto p-4 pt-2"
+        class="flex max-h-container_fit flex-col overflow-auto p-4 pt-2"
     />
 </div>

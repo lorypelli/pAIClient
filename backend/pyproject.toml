@@ -9,7 +9,7 @@ python = ">=3.8"
 fastapi = "^0.111.0"
 uvicorn = "^0.29.0"
 requests = "^2.32.3"
-openai = "^1.35.10"
+openai = "^1.36.1"
 python-dotenv = "^1.0.1"
 
 
