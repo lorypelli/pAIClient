@@ -6,10 +6,10 @@ authors = ["LoryPelli"]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-fastapi = "^0.111.0"
+fastapi = "^0.111.1"
 uvicorn = "^0.29.0"
 requests = "^2.32.3"
-openai = "^1.36.1"
+openai = "^1.57.3"
 python-dotenv = "^1.0.1"
 
 
