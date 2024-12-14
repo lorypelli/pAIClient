@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-from fastapi import Form, Request
+from fastapi import Form
 from fastapi.responses import RedirectResponse
 from utils.client import gpt
 
 
 def login(token: str = Form()):
-    res: Response = RedirectResponse("/", 302)
+    res = RedirectResponse("/", 302)
     try:
         gpt.api_key = token
         gpt.models.list()

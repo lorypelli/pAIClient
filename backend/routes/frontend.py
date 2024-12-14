@@ -23,6 +23,6 @@ def frontend(req: Request, path: str):
         return RedirectResponse("/", 302)
     if isdir(f"{d}/{path}"):
         path = f"{path}/index.html"
-    res: FileResponse = FileResponse(f"{d}/{path}")
+    res = FileResponse(f"{d}/{path}")
     res.delete_cookie("messages")
     return res

@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from routes import router
 from routes.error import error
-from utils.client import gpt
 from uvicorn import run
 
 app = FastAPI(docs_url="/api/docs", redoc_url=None)

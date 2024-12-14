@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from routes.config import get_config, post_config
 from routes.env import env
-from routes.error import error
 from routes.frontend import frontend
 from routes.login import login
 from routes.response import response
