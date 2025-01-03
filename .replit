@@ -1,4 +1,4 @@
-run = "make -s"
+run = "make"
 
 [nix]
 channel = "stable-23_11"
